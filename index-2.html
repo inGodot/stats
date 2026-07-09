@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Топ победителей в челленджах</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app">
+
+    <header class="header">
+      <h1>🏆 Топ участников</h1>
+      <p class="subtitle">Рейтинг по очкам за все челленджи</p>
+    </header>
+
+    <div class="legend">
+      <div class="legend-item"><span class="dot gold"></span>1 место — 5 очков</div>
+      <div class="legend-item"><span class="dot silver"></span>2 место — 3 очка</div>
+      <div class="legend-item"><span class="dot bronze"></span>3 место — 2 очка</div>
+      <div class="legend-item"><span class="dot base"></span>участие — 1 очко</div>
+    </div>
+
+    <ul class="rating-list" id="ratingList">
+      <!-- элементы рейтинга -->
+    </ul>
+
+  </div>
+
+<script>
+  // Очки за места
+  const POINTS = { first: 5, second: 3, third: 2, participant: 1 };
+
+  // Сырые результаты по каждому челленджу — редактируйте здесь
+  const challenges = [
+    {
+      first: "Lev",
+      second: "Суетолог",
+      third: "sirandev",
+      others: ["KIRILL", "Danila", "Foront"]
+    },
+    {
+      first: "Lev",
+      second: "sirandev",
+      third: "Foront",
+      others: ["Суетолог", "Станислав"]
+    },
+    {
+      first: "Alexey",
+      second: "Alexander",
+      third: "firstName lastName",
+      others: ["Суетолог", "Foront"]
+    }
+  ];
+
+  // Считаем суммарные очки по всем челленджам
+  const totals = {};
+
+  function addPoints(name, points) {
+    totals[name] = (totals[name] || 0) + points;
+  }
+
+  challenges.forEach(ch => {
+    addPoints(ch.first, POINTS.first);
+    addPoints(ch.second, POINTS.second);
+    addPoints(ch.third, POINTS.third);
+    ch.others.forEach(name => addPoints(name, POINTS.participant));
+  });
+
+  // Превращаем в массив и сортируем по убыванию очков
+  const data = Object.entries(totals)
+    .map(([name, points]) => ({ name, points }))
+    .sort((a, b) => b.points - a.points);
+
+  const list = document.getElementById("ratingList");
+
+  data.forEach((user, index) => {
+    const place = index + 1;
+
+    const li = document.createElement("li");
+    li.className = "rating-item";
+
+    let medalClass = "base";
+    let medalIcon = "";
+    if (place === 1) { medalClass = "gold"; medalIcon = "🥇"; }
+    else if (place === 2) { medalClass = "silver"; medalIcon = "🥈"; }
+    else if (place === 3) { medalClass = "bronze"; medalIcon = "🥉"; }
+
+    li.innerHTML = `
+      <div class="place ${medalClass}">
+        ${medalIcon ? medalIcon : place}
+      </div>
+      <div class="user-info">
+        <div class="user-name">${user.name}</div>
+      </div>
+      <div class="points">${user.points} <span class="points-label">очк.</span></div>
+    `;
+
+    list.appendChild(li);
+  });
+</script>
+
+</body>
+</html>
