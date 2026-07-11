@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
+
+  <title>Время участников</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app">
+
+    <header class="header">
+      <h1>🕒 Время участников</h1>
+      <p class="subtitle">Текущее местное время участников</p>
+    </header>
+
+    <nav class="navigation">
+      <a href="index.html" class="nav-link">
+        🏆 Рейтинг
+      </a>
+
+      <a href="time.html" class="nav-link active">
+        🕒 Время участников
+      </a>
+    </nav>
+
+    <ul class="rating-list" id="timeList"></ul>
+
+  </div>
+
+  <script>
+    /*
+      Участники и их часовые пояса.
+
+      Список часовых поясов:
+      Германия — Europe/Berlin
+      Украина — Europe/Kyiv
+      Москва — Europe/Moscow
+      Турция — Europe/Istanbul
+      Казахстан — Asia/Almaty
+      Ташкент — Asia/Tashkent
+      Лондон — Europe/London
+      Нью-Йорк — America/New_York
+    */
+
+    const participants = [
+      {
+        name: "Lev",
+        timeZone: "Europe/Berlin"
+      },
+      {
+        name: "Суетолог",
+        timeZone: "Europe/Kyiv"
+      },
+      {
+        name: "sirandev",
+        timeZone: "Europe/Moscow"
+      },
+      {
+        name: "KIRILL",
+        timeZone: "Europe/Berlin"
+      },
+      {
+        name: "Danila",
+        timeZone: "Asia/Almaty"
+      },
+      {
+        name: "Foront",
+        timeZone: "Europe/Kyiv"
+      },
+      {
+        name: "Станислав",
+        timeZone: "Europe/Berlin"
+      },
+      {
+        name: "Alexey",
+        timeZone: "Europe/Moscow"
+      },
+      {
+        name: "Alexander",
+        timeZone: "Europe/Istanbul"
+      },
+      {
+        name: "firstName lastName",
+        timeZone: "Europe/London"
+      }
+    ];
+
+    const timeList = document.getElementById("timeList");
+
+    function createParticipants() {
+      timeList.innerHTML = "";
+
+      participants.forEach((participant, index) => {
+        const item = document.createElement("li");
+
+        item.className = "rating-item time-item";
+        item.style.animationDelay = `${index * 40}ms`;
+
+        item.innerHTML = `
+          <div class="place base">
+            ${index + 1}
+          </div>
+
+          <div class="user-info">
+            <div class="user-name">
+              ${escapeHtml(participant.name)}
+            </div>
+
+            <div class="timezone-name">
+              ${escapeHtml(participant.timeZone)}
+            </div>
+          </div>
+
+          <div class="current-time" data-timezone="${escapeHtml(participant.timeZone)}">
+            --:--:--
+          </div>
+        `;
+
+        timeList.appendChild(item);
+      });
+
+      updateTime();
+    }
+
+    function updateTime() {
+      const timeElements = document.querySelectorAll(".current-time");
+
+      timeElements.forEach(element => {
+        const timeZone = element.dataset.timezone;
+
+        try {
+          const currentTime = new Intl.DateTimeFormat("ru-RU", {
+            timeZone,
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+          }).format(new Date());
+
+          element.textContent = currentTime;
+        } catch (error) {
+          element.textContent = "Ошибка";
+          console.error(`Неверный часовой пояс: ${timeZone}`);
+        }
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    createParticipants();
+
+    // Обновляем время каждую секунду
+    setInterval(updateTime, 1000);
+  </script>
+
+</body>
+</html>
